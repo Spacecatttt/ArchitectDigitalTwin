@@ -1,0 +1,54 @@
+graph LR
+    subgraph OME["OME: обробний центр"]
+        cnc["ЧПК SINUMERIK<br/>OPC UA-сервер"]
+        daq["Акселерометр + Pt100<br/>модуль DAQ"]
+    end
+
+    subgraph DCE["DCE: граничний шлюз"]
+        collect["Збирання даних<br/>OPC UA-клієнт + DAQ<br/>(DataCollection)"]
+        features["Обчислення ознак вібрації<br/>(FeatureExtractor)"]
+        buffer["Буфер на шлюзі ≥ 15 хв<br/>(EdgeBuffer)"]
+    end
+
+    subgraph DTE["DTE: сервер платформи"]
+        broker["Брокер телеметрії MQTT<br/>(TelemetryBroker)"]
+        sync["Служба синхронізації стану<br/>(SyncService)"]
+        tsdb["Сховище часових рядів<br/>(TimeSeriesStore)"]
+        archive["Архів сирих даних<br/>(RawArchive)"]
+        analytics["Служба аналітики<br/>(AnalyticsService)"]
+        api["Twin API REST + WebSocket<br/>(TwinApi)"]
+    end
+
+    subgraph UE["UE"]
+        ui["Веб-панель оператора й інженера<br/>(OperatorUi)"]
+        mesad["Адаптер MES<br/>(MesAdapter)"]
+    end
+
+    subgraph CROSS["Наскрізна сутність"]
+        sec["Служба ідентифікації та доступу<br/>(SecurityService)"]
+        dq["Модуль валідації відліків<br/>(DataQuality)"]
+        im["Інформаційна модель<br/>(InfoModel)"]
+    end
+
+    cnc -->|"OPC UA підписка"| collect
+    daq -->|"блоки 5 кГц"| collect
+    collect --> features
+    collect -->|"сирі блоки під час різання"| buffer
+    features --> buffer
+    buffer -->|"MQTT/TLS"| broker
+    broker --> sync
+    broker --> tsdb
+    broker -->|"сирі блоки"| archive
+    sync --> api
+    tsdb --> analytics
+    analytics -->|"події, ресурс"| sync
+    tsdb --> api
+    api -->|"WebSocket / REST"| ui
+    api --> mesad
+
+    dq -.->|"перевірка відліків"| collect
+    dq -.->|"позначка якості"| sync
+    im -.->|"схема відліку"| collect
+    im -.->|"схема стану"| api
+    sec -.->|"токени, ролі"| api
+    sec -.->|"сертифікати"| broker

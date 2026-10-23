@@ -1,0 +1,43 @@
+graph TB
+    subgraph SHOP["Цех: OT-мережа (VLAN 10)"]
+        subgraph MACHINE["Обробний центр"]
+            cnc["ЧПК SINUMERIK 828D<br/>OPC UA :4840<br/>SignAndEncrypt"]
+            acc["Акселерометр IEPE<br/>Pt100 ×2"]
+        end
+        subgraph EDGE["Граничний ПК (IPC, Ubuntu 24.04, Docker)"]
+            gw["контейнер: збирання даних"]
+            fe["контейнер: обчислення ознак"]
+            buf["контейнер: буфер (SQLite)"]
+            daq["DAQ 16 біт, USB"]
+        end
+        hmi["Панель біля верстата<br/>(браузер)"]
+    end
+
+    fw{{"Міжмережевий екран OT/IT<br/>дозволено: 8883 (MQTT/TLS) від шлюзу,<br/>443 (HTTPS/WSS) до панелі"}}
+
+    subgraph SRV["Серверна підприємства: IT-мережа (VLAN 20)"]
+        subgraph HOST["Сервер платформи (Docker Compose; при 10+ верстатах — k3s)"]
+            mq["Mosquitto :8883 TLS"]
+            sy["SyncService"]
+            an["AnalyticsService"]
+            api["TwinApi :443 HTTPS/WSS<br/>(зворотний проксі)"]
+            ts[("TimescaleDB")]
+            ar[("MinIO: архів Parquet")]
+            kc["Keycloak (RBAC)"]
+        end
+        mes["Сервер MES"]
+        ws["АРМ технолога й інженера<br/>(браузер)"]
+    end
+
+    acc --> daq --> gw
+    cnc -->|"OPC UA/TCP 4840"| gw
+    gw --> fe --> buf
+    buf -->|"MQTT 5 / TLS 1.3"| fw --> mq
+    mq --> sy --> api
+    mq --> ts
+    mq --> ar
+    ts --> an --> sy
+    api -->|"HTTPS/WSS :443"| fw --> hmi
+    api -->|"HTTPS/WSS"| ws
+    api -->|"REST/TLS"| mes
+    kc -.-> api
