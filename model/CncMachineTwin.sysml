@@ -14,16 +14,18 @@ package CncMachineTwin {
             doc /* DCE: збирання даних */
             requirement <'FR-01'> collectSignals {
                 doc /* Платформа збирає 13 сигналів реєстру з ЧПК (OPC UA) та модуля DAQ
-                     * із частотами реєстру і зберігає часову мітку джерела кожного відліку. */
+                     * із частотами реєстру, а також ім'я активної NC-програми й лічильник деталей;
+                     * для кожного відліку зберігається часова мітка джерела. */
                 attribute signalCount : Integer = 13;
             }
             requirement <'FR-02'> vibrationFeatures {
-                doc /* Граничний шлюз обчислює з сирої вібрації S01 вісім ознак у ковзному вікні
-                     * 512 відліків із кроком близько 51 мс. */
+                doc /* Граничний шлюз обчислює з сирої вібрації S01 вісім ознак у суміжних вікнах
+                     * 512 відліків із кроком близько 102 мс. */
                 attribute featureCount : Integer = 8;
             }
             requirement <'NFR-05'> noDataLoss {
-                doc /* За розриву зв'язку шлюз-платформа до 15 хв втрата відліків 0 %. */
+                doc /* За розриву зв'язку шлюз-платформа до 15 хв втрата ознак вібрації та повільних
+                     * сигналів S02-S13 0 %; для сирих блоків вібрації доставка не гарантується. */
                 attribute outageMinutes : Real = 15.0;
                 attribute lossPercent : Real;
                 require constraint { lossPercent == 0.0 }
@@ -61,7 +63,8 @@ package CncMachineTwin {
                 require constraint { growth <= 0.30 }
             }
             requirement <'NFR-04'> retention {
-                doc /* Ознаки й повільні сигнали 12 міс., сира вібрація 7 діб; сховище <= 100 ГБ на верстат на рік. */
+                doc /* Ознаки й S02-S08, S11-S13: повна роздільність 30 діб, похвилинні агрегати 12 міс.;
+                     * S09, S10: повна роздільність 12 міс.; сира вібрація 7 діб; сховище <= 100 ГБ на верстат на рік. */
                 attribute storageGbPerYear : Real;
                 require constraint { storageGbPerYear <= 100.0 }
             }
@@ -145,16 +148,13 @@ package CncMachineTwin {
             port samplesOut : TelemetryFlow;
         }
         part def FeatureExtractor {
-            doc /* 8 ознак вібрації: вікно 512 відліків, крок 256 */
+            doc /* 8 ознак вібрації: суміжні вікна 512 відліків, без перекриття (≈ 10 Гц) */
             attribute windowSamples : Integer = 512;
-            port samplesIn : ~TelemetryFlow;
             port featuresOut : TelemetryFlow;
         }
         part def EdgeBuffer {
             doc /* Локальний буфер >= 15 хв для NFR-05 */
             attribute capacityMinutes : Real = 15.0;
-            port samplesIn : ~TelemetryFlow;
-            port featuresIn : ~TelemetryFlow;
             port north : TelemetryFlow;
         }
         part def EdgeGateway {
@@ -167,44 +167,36 @@ package CncMachineTwin {
             part buffer : EdgeBuffer;
             bind cncIn = collection.cncIn;
             bind daqIn = collection.daqIn;
-            connect collection.samplesOut to featureExtractor.samplesIn;
-            connect collection.samplesOut to buffer.samplesIn;
-            connect featureExtractor.featuresOut to buffer.featuresIn;
+            connect collection.samplesOut to featureExtractor;
+            connect collection.samplesOut to buffer;
+            connect featureExtractor.featuresOut to buffer;
             bind buffer.north = north;
         }
 
         // ---- DTE ----
         part def TelemetryBroker {
             doc /* MQTT 5, TLS :8883, QoS 1 (ADR-0002) — доступ до ресурсів та обмін */
-            port inbound : ~TelemetryFlow;
             port outbound : TelemetryFlow;
         }
         part def SyncService {
             doc /* Служба синхронізації стану двійника — функціонування та керування */
-            port telemetryIn : ~TelemetryFlow;
-            port eventsIn : ~AlertFlow;
             port stateOut : StateFlow;
         }
         part def TimeSeriesStore {
             doc /* TimescaleDB: 30 діб повна роздільність, 12 міс. агрегати (ADR-0001) */
             attribute retentionMonths : Integer = 12;
-            port telemetryIn : ~TelemetryFlow;
             port historyOut : TelemetryFlow;
         }
         part def RawArchive {
             doc /* MinIO + Parquet, сира вібрація 7 діб (ADR-0001) */
             attribute retentionDays : Integer = 7;
-            port rawIn : ~TelemetryFlow;
         }
         part def AnalyticsService {
             doc /* Автоколивання, перевантаження, знос інструмента, звіт за зміну — застосунки та служби */
-            port historyIn : ~TelemetryFlow;
             port alertsOut : AlertFlow;
         }
         part def TwinApi {
             doc /* REST + WebSocket :443 — доступ до ресурсів та обмін */
-            port stateIn : ~StateFlow;
-            port historyIn : ~TelemetryFlow;
             port clientOut : StateFlow;
             port mesOut : StateFlow;
         }
@@ -212,11 +204,9 @@ package CncMachineTwin {
         // ---- UE ----
         part def OperatorUi {
             doc /* Веб-панель оператора й інженера */
-            port stateIn : ~StateFlow;
         }
         part def MesAdapter {
             doc /* Передача показників завантаження в MES */
-            port stateIn : ~StateFlow;
         }
 
         // ---- Наскрізна сутність ----
@@ -239,16 +229,16 @@ package CncMachineTwin {
             part dataQuality : DataQuality;
             part infoModel : InfoModel;
 
-            connect edge.north to broker.inbound;
-            connect broker.outbound to sync.telemetryIn;
-            connect broker.outbound to tsdb.telemetryIn;
-            connect broker.outbound to archive.rawIn;
-            connect tsdb.historyOut to analytics.historyIn;
-            connect analytics.alertsOut to sync.eventsIn;
-            connect sync.stateOut to api.stateIn;
-            connect tsdb.historyOut to api.historyIn;
-            connect api.clientOut to ui.stateIn;
-            connect api.mesOut to mes.stateIn;
+            connect edge.north to broker;
+            connect broker.outbound to sync;
+            connect broker.outbound to tsdb;
+            connect broker.outbound to archive;
+            connect tsdb.historyOut to analytics;
+            connect analytics.alertsOut to sync;
+            connect sync.stateOut to api;
+            connect tsdb.historyOut to api;
+            connect api.clientOut to ui;
+            connect api.mesOut to mes;
         }
 
         // ---- Контекст: фізичний об'єкт + платформа ----
@@ -323,33 +313,35 @@ package CncMachineTwin {
             entry; then off;
 
             state off;
-            state idle;
-            state running {
-                entry; then airCut;
-                state airCut;
-                state cutting;
-                transition first airCut accept CutStart then cutting;
-                transition first cutting accept CutEnd then airCut;
+            state on {
+                entry; then idle;
+                state idle;
+                state running {
+                    entry; then airCut;
+                    state airCut;
+                    state cutting;
+                    transition first airCut accept CutStart then cutting;
+                    transition first cutting accept CutEnd then airCut;
+                }
+                state feedHold;
+                state toolChange;
+
+                transition first idle accept CycleStart then running;
+                transition first running accept FeedHoldCmd then feedHold;
+                transition first feedHold accept CycleStart then running;
+                transition first running accept ToolChangeCmd then toolChange;
+                transition first toolChange accept ToolChangeDone then running;
+                transition first running accept ProgramEnd then idle;
             }
-            state feedHold;
-            state toolChange;
             state alarm;
             state eStop;
 
-            transition first off accept PowerOn then idle;
-            transition first idle accept CycleStart then running;
-            transition first running accept FeedHoldCmd then feedHold;
-            transition first feedHold accept CycleStart then running;
-            transition first running accept ToolChangeCmd then toolChange;
-            transition first toolChange accept ToolChangeDone then running;
-            transition first running accept ProgramEnd then idle;
-            transition first running accept AlarmRaised then alarm;
-            transition first idle accept AlarmRaised then alarm;
-            transition first alarm accept AlarmReset then idle;
-            transition first running accept EmergencyStop then eStop;
-            transition first idle accept EmergencyStop then eStop;
-            transition first eStop accept AlarmReset then idle;
-            transition first idle accept PowerOff then off;
+            transition first off accept PowerOn then on;
+            transition first on accept AlarmRaised then alarm;
+            transition first on accept EmergencyStop then eStop;
+            transition first alarm accept AlarmReset then on;
+            transition first eStop accept AlarmReset then on;
+            transition first on accept PowerOff then off;
         }
     }
 
@@ -431,10 +423,12 @@ package CncMachineTwin {
         satisfy UE_User::endToEndLatency by context.platform.api;
         satisfy DTE_ApplicationsAndServices::chatterAndOverload by context.platform.analytics;
         satisfy DTE_ApplicationsAndServices::toolWear by context.platform.analytics;
+        satisfy DTE_ApplicationsAndServices::shiftReport by context.platform.analytics;
         satisfy DTE_ApplicationsAndServices::shiftReport by context.platform.mes;
         satisfy DTE_OperationAndManagement::history by context.platform.tsdb;
         satisfy DTE_OperationAndManagement::syncLatency by context.platform.sync;
         satisfy DTE_OperationAndManagement::scalability by context.platform.broker;
+        satisfy DTE_OperationAndManagement::retention by context.platform.tsdb;
         satisfy DTE_OperationAndManagement::retention by context.platform.archive;
         satisfy CrossCutting::dataQuality by context.platform.dataQuality;
         satisfy CrossCutting::security by context.platform.security;

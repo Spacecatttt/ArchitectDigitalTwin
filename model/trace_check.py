@@ -29,9 +29,9 @@ doc_reqs = set(re.findall(r"^\| ((?:FR|NFR)-\d+) \|", req_md, re.M))
 trace_rows = set(re.findall(r"^\| ((?:FR|NFR)-\d+) \|", trace_md, re.M))
 
 R = sorted(model_reqs, key=lambda r: (r.startswith("NFR"), int(r.split("-")[1])))
-print(f"{'Вимога':<8} {'Блок (satisfy)':<38} Перевірка (verify)")
+print(f"{'Вимога':<8} {'Блок (satisfy)':<49} Перевірка (verify)")
 for rid in R:
-    print(f"{rid:<8} {', '.join(satisfied.get(rid, ['—'])):<38} {', '.join(verified.get(rid, ['—']))}")
+    print(f"{rid:<8} {', '.join(satisfied.get(rid, ['—'])):<49} {', '.join(verified.get(rid, ['—']))}")
 
 n = len(R)
 ct = sum(1 for r in R if r in satisfied)

@@ -11,11 +11,11 @@
 | FR-05 | Служба аналітики (`analytics : AnalyticsService`) | `ToolWearReplayTest` — прогін історії інструмента до 80 % ресурсу, перевірка попередження | ЛР 4 |
 | FR-06 | Сховище часових рядів (`tsdb : TimeSeriesStore`) | `HistoryQueryTest` — запити за інтервалом, тренди, вивантаження CSV | ЛР 2 |
 | FR-07 | Модуль валідації відліків (`dataQuality : DataQuality`) | `DataQualityRulesTest` — модульні тести правил якості на синтетичних аномаліях | ЛР 2 |
-| FR-08 | Адаптер MES (`mes : MesAdapter`) | `ShiftReportFormatTest` — перевірка формату звіту й обміну з MES-заглушкою | ЛР 4 |
+| FR-08 | Служба аналітики формує звіт (`analytics : AnalyticsService`), адаптер MES передає показники (`mes : MesAdapter`) | `ShiftReportFormatTest` — перевірка формату звіту й обміну з MES-заглушкою | ЛР 4 |
 | NFR-01 | Служба синхронізації стану (`sync : SyncService`) | `SyncLatencyMeasurement` — мітки джерела та API, 30 хв, p95 ≤ 200 мс | ЛР 2 |
 | NFR-02 | Twin API, маршрут «датчик — подання» (`api : TwinApi`) | `EndToEndComparativeRun` — порівняльний прогін Г-01 (опитування / push), медіана й p95 ≤ 500 мс | ЛР 4 |
 | NFR-03 | Брокер телеметрії, масштабування (`broker : TelemetryBroker`) | `LoadTest` — навантажувальний прогін 1 і 10 емуляторів верстатів, зростання p95 ≤ 30 % | ЛР 2 |
-| NFR-04 | Архів сирих даних і політика зберігання (`archive : RawArchive`) | `StorageGrowthTest` — 7-денний прогін, фактичний розмір БД, екстраполяція ≤ 100 ГБ/рік | ЛР 2 |
+| NFR-04 | Сховище часових рядів і політика зберігання (`tsdb : TimeSeriesStore`), архів сирих даних (`archive : RawArchive`) | `StorageGrowthTest` — 7-денний прогін, фактичний розмір БД, екстраполяція ≤ 100 ГБ/рік | ЛР 2 |
 | NFR-05 | Буфер на шлюзі (`edge.buffer : EdgeBuffer`) | `OutageInjectionTest` — відключення мережі на 15 хв, кількість відліків до й після | ЛР 2 |
 | NFR-06 | Служба ідентифікації та доступу (`security : SecurityService`) | `SecurityScanTest` — nmap, перевірка конфігурацій TLS/OPC UA, тест доступу кожною роллю | ЛР 3 |
 
@@ -23,7 +23,7 @@
 
 ## Покриття
 
-Загальна кількість вимог |R| = 14 (8 FR + 6 NFR). Кожна має щонайменше один зв’язок satisfy (|R_т| = 14) і одну перевірку verify (|R_в| = 14):
+Загальна кількість вимог |R| = 14 (8 FR + 6 NFR). Кожна має щонайменше один зв’язок satisfy (|R_т| = 14; FR-08 і NFR-04 — по два) і одну перевірку verify (|R_в| = 14):
 
 ```
 C_т = |R_т| / |R| · 100 % = 14 / 14 · 100 % = 100 %
@@ -37,21 +37,21 @@ python3 model/trace_check.py
 ```
 
 ```
-Вимога   Блок (satisfy)                         Перевірка (verify)
-FR-01    context.platform.edge.collection       SignalCollectionTest
-FR-02    context.platform.edge.featureExtractor FeatureComparisonTest
-FR-03    context.platform.ui                    LiveViewAcceptanceTest
-FR-04    context.platform.analytics             ChatterInjectionTest
-FR-05    context.platform.analytics             ToolWearReplayTest
-FR-06    context.platform.tsdb                  HistoryQueryTest
-FR-07    context.platform.dataQuality           DataQualityRulesTest
-FR-08    context.platform.mes                   ShiftReportFormatTest
-NFR-01   context.platform.sync                  SyncLatencyMeasurement
-NFR-02   context.platform.api                   EndToEndComparativeRun
-NFR-03   context.platform.broker                LoadTest
-NFR-04   context.platform.archive               StorageGrowthTest
-NFR-05   context.platform.edge.buffer           OutageInjectionTest
-NFR-06   context.platform.security              SecurityScanTest
+Вимога   Блок (satisfy)                                    Перевірка (verify)
+FR-01    context.platform.edge.collection                  SignalCollectionTest
+FR-02    context.platform.edge.featureExtractor            FeatureComparisonTest
+FR-03    context.platform.ui                               LiveViewAcceptanceTest
+FR-04    context.platform.analytics                        ChatterInjectionTest
+FR-05    context.platform.analytics                        ToolWearReplayTest
+FR-06    context.platform.tsdb                             HistoryQueryTest
+FR-07    context.platform.dataQuality                      DataQualityRulesTest
+FR-08    context.platform.analytics, context.platform.mes  ShiftReportFormatTest
+NFR-01   context.platform.sync                             SyncLatencyMeasurement
+NFR-02   context.platform.api                              EndToEndComparativeRun
+NFR-03   context.platform.broker                           LoadTest
+NFR-04   context.platform.tsdb, context.platform.archive   StorageGrowthTest
+NFR-05   context.platform.edge.buffer                      OutageInjectionTest
+NFR-06   context.platform.security                         SecurityScanTest
 
 |R| = 14;  |R_т| = 14;  |R_в| = 14
 C_т = 14/14 · 100 % = 100%
