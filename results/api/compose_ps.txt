@@ -1,0 +1,19 @@
+SERVICE         STATUS
+connectivity    Up 3 minutes (healthy)
+ditto-ui        Up 3 minutes
+gateway         Up 3 minutes (healthy)
+grafana         Up 3 minutes
+influxdb        Up 3 minutes
+mongodb         Up 3 minutes
+mosquitto       Up 3 minutes
+nginx           Up 3 minutes
+policies        Up 3 minutes (healthy)
+swagger-ui      Up 3 minutes
+things          Up 3 minutes (healthy)
+things-search   Up 3 minutes (healthy)
+web             Up 3 minutes
+
+GET /health:
+{
+  "status": "UP"
+}

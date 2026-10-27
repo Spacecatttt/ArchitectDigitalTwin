@@ -1,0 +1,69 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "qudt": "http://qudt.org/vocab/unit/",
+      "cnc": "http://example.org/cnc#"
+    }
+  ],
+  "@type": [
+    "tm:ThingModel",
+    "cnc:FeedAxes"
+  ],
+  "title": "Осі подачі",
+  "version": {
+    "model": "1.0.0"
+  },
+  "properties": {
+    "positionX": {
+      "@type": "cnc:AxisPosition",
+      "title": "Фактичне положення осі X (S04)",
+      "type": "number",
+      "unit": "qudt:MilliM",
+      "minimum": 0,
+      "maximum": 762,
+      "observable": true,
+      "default": 0
+    },
+    "positionY": {
+      "@type": "cnc:AxisPosition",
+      "title": "Фактичне положення осі Y (S05)",
+      "type": "number",
+      "unit": "qudt:MilliM",
+      "minimum": 0,
+      "maximum": 406,
+      "observable": true,
+      "default": 0
+    },
+    "positionZ": {
+      "@type": "cnc:AxisPosition",
+      "title": "Фактичне положення осі Z (S06)",
+      "type": "number",
+      "unit": "qudt:MilliM",
+      "minimum": 0,
+      "maximum": 508,
+      "observable": true,
+      "default": 0
+    },
+    "feedRate": {
+      "@type": "cnc:FeedRate",
+      "title": "Фактична подача (S07)",
+      "type": "number",
+      "unit": "qudt:MilliM-PER-MIN",
+      "minimum": 0,
+      "maximum": 25000,
+      "observable": true,
+      "default": 0
+    },
+    "currentX": {
+      "@type": "cnc:MotorCurrent",
+      "title": "Струм приводу осі X, макс. за 100 мс (S08)",
+      "type": "number",
+      "unit": "qudt:A",
+      "minimum": 0,
+      "maximum": 30,
+      "observable": true,
+      "default": 0
+    }
+  }
+}

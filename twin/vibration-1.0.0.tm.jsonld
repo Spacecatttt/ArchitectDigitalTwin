@@ -1,0 +1,95 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "qudt": "http://qudt.org/vocab/unit/",
+      "cnc": "http://example.org/cnc#"
+    }
+  ],
+  "@type": [
+    "tm:ThingModel",
+    "cnc:SpindleVibration"
+  ],
+  "title": "Ознаки вібрації шпинделя",
+  "version": {
+    "model": "1.0.0"
+  },
+  "properties": {
+    "rms": {
+      "@type": "cnc:VibrationRms",
+      "title": "СКЗ прискорення (S01, вікно 512 відліків)",
+      "type": "number",
+      "unit": "qudt:G",
+      "minimum": 0,
+      "maximum": 50,
+      "observable": true,
+      "default": 0
+    },
+    "peak": {
+      "@type": "cnc:VibrationPeak",
+      "title": "Пікове прискорення (S01)",
+      "type": "number",
+      "unit": "qudt:G",
+      "minimum": 0,
+      "maximum": 50,
+      "observable": true,
+      "default": 0
+    },
+    "crestFactor": {
+      "@type": "cnc:CrestFactor",
+      "title": "Пік-фактор",
+      "type": "number",
+      "unit": "qudt:UNITLESS",
+      "minimum": 1,
+      "maximum": 20,
+      "observable": true,
+      "default": 1
+    },
+    "kurtosis": {
+      "@type": "cnc:Kurtosis",
+      "title": "Ексцес",
+      "type": "number",
+      "unit": "qudt:UNITLESS",
+      "minimum": 0,
+      "maximum": 50,
+      "observable": true,
+      "default": 0
+    },
+    "band1": {
+      "@type": "cnc:BandEnergy",
+      "title": "Енергія в смузі 0–200 Гц, g²",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "observable": true,
+      "default": 0
+    },
+    "band2": {
+      "@type": "cnc:BandEnergy",
+      "title": "Енергія в смузі 200–800 Гц (зубцева), g²",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "observable": true,
+      "default": 0
+    },
+    "band3": {
+      "@type": "cnc:BandEnergy",
+      "title": "Енергія в смузі 800–1500 Гц (власні частоти, автоколивання), g²",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "observable": true,
+      "default": 0
+    },
+    "band4": {
+      "@type": "cnc:BandEnergy",
+      "title": "Енергія в смузі 1500–2000 Гц, g²",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "observable": true,
+      "default": 0
+    }
+  }
+}

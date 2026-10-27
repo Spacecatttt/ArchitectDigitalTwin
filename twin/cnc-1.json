@@ -1,0 +1,15 @@
+{
+  "definition": "http://web/twin/cnc-machine-1.0.0.tm.jsonld",
+  "policyId": "org.pzks:cnc-1",
+  "attributes": {
+    "manufacturer": "Верстатобудівний завод",
+    "model": "VMC-850",
+    "serialNo": "VMC-2023-0815",
+    "controller": "SINUMERIK 828D",
+    "maxSpindleSpeed": 12000,
+    "travelX": 762,
+    "travelY": 406,
+    "travelZ": 508,
+    "cell": "org.pzks:cell-1"
+  }
+}

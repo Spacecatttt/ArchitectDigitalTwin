@@ -1,0 +1,14 @@
+HTTP/1.1 201 Created
+Server: nginx
+Date: Tue, 27 Oct 2026 21:31:47 GMT
+Content-Type: application/json
+Content-Length: 104
+Connection: keep-alive
+Location: http://localhost:8080/api/2/things/org.pzks:test-1
+correlation-id: 76442a4c-9654-4b23-9f35-9ab8905d2160
+ditto-originator: nginx:ditto
+entity-revision: 3
+response-required: false
+etag: "rev:3"
+
+{"thingId":"org.pzks:test-1","policyId":"org.pzks:test-1","attributes":{"purpose":"перевірка"}}

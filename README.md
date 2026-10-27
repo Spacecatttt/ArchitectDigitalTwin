@@ -79,3 +79,34 @@ for f in context components deployment dataflow; do npx -y @mermaid-js/mermaid-c
 | Компонентне | функційна / логічна декомпозиція | ЗС-6 розробник, ЗС-2 технолог, ЗС-3 інженер з обслуговування | з яких складників складається платформа, де реалізована кожна функція, як складники взаємодіють | `diagrams/components.mmd` |
 | Розгортання | фізична / інфраструктурна | ЗС-5 адміністратор ІТ/ОТ, ЗС-6 розробник | на яких вузлах і в яких мережевих зонах працюють складники, які порти й протоколи відкрито, як масштабувати | `diagrams/deployment.mmd` |
 | Потоку даних (модель інформаційних процесів) | інформаційна / процесна | ЗС-1 оператор, ЗС-6 розробник | маршрут відліку, перетворення на кожній ділянці, затримки, паралельні гілки | `diagrams/dataflow.mmd` |
+
+---
+
+# ЛР 2. Платформа: інформаційна модель, канал телеметрії, синхронізація стану
+
+Стенд на Eclipse Ditto 3.9.7 у доменах ISO 23247: емулятор граничного шлюзу верстата (OME) → Mosquitto + з’єднання Ditto з відображенням `platform/mapping.js` (DCE) → двійник `org.pzks:cnc-1`, історик, InfluxDB (DTE) → вебподання `ui/` і Grafana (UE).
+
+| Каталог / файл | Зміст |
+|---|---|
+| `platform/` | `docker-compose.yml` (include Ditto + Mosquitto, nginx `web`, InfluxDB, Grafana), `ditto-override.yml`, `web.conf`, `mapping.js`, `connection.json`, `connection.py`, `grafana-dashboard.json` |
+| `twin/` | моделі типу W3C WoT TM `cnc-machine-1.0.0` + підмоделі `axes`, `spindle`, `vibration`, `status`, `sync`; `policy.json`; примірник `cnc-1.json`; дільниця `cell-1.json`; онтологія `ontology.ttl` |
+| `emulator/emulator.py` | емулятор шлюзу: цикл обробки деталі, 10 повідомлень/с, тема `pzks/cnc-1/telemetry` |
+| `ui/index.html` | вебподання (кеш стану, давність даних, власна частота оновлення) |
+| `sync/` | `historian.py` (SSE → InfluxDB), `consistency.py` (узгодженість із джерелом) |
+| `load/` | `locustfile.py` (5…400 повідомлень/с), `analyze.py` (втрати, p50/p95, графік) |
+| `results/` | вихідні дані й результати вимірювань |
+| `docs/` | `platform.md`, `information-model.md`, `telemetry.md`, `sync.md`, `adr/0004-vybir-platformy.md`, `diagrams/ontology.*` |
+
+Запуск (Docker Compose 2.24+, ≥ 4 ГБ пам’яті для Docker, Python 3.11+):
+
+```
+python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
+git -c advice.detachedHead=false clone --depth 1 --branch 3.9.7 https://github.com/eclipse-ditto/ditto.git platform/ditto
+cd platform && docker compose up -d && cd ..
+curl -u ditto:ditto -X PUT -H "Content-Type: application/json" --data @twin/policy.json http://localhost:8080/api/2/policies/org.pzks:cnc-1
+curl -u ditto:ditto -X PUT -H "Content-Type: application/json" --data @twin/cnc-1.json http://localhost:8080/api/2/things/org.pzks:cnc-1
+python platform/connection.py
+python emulator/emulator.py --rate 10        # подання: http://localhost:8090/ui/
+```
+
+Адреси: API Ditto <http://localhost:8080/api/2> (ditto/ditto), вебконсоль <http://localhost:8080/ui/>, моделі <http://localhost:8090/twin/>, подання <http://localhost:8090/ui/>, InfluxDB <http://localhost:8086> (admin/admin-2026), Grafana <http://localhost:3000> (admin/admin).

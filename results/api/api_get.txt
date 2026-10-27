@@ -1,0 +1,7 @@
+{
+  "thingId": "org.pzks:test-1",
+  "policyId": "org.pzks:test-1",
+  "attributes": {
+    "purpose": "перевірка"
+  }
+}

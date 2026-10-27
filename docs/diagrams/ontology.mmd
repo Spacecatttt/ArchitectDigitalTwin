@@ -1,0 +1,37 @@
+graph TB
+    %% Класи верхнього рівня (попарно неперетинні)
+    Asset["Asset<br/>Актив"]
+    Sensor["Sensor<br/>Датчик"]
+    OP["ObservableProperty<br/>Спостережувана величина"]
+
+    %% Підкласи (пунктир — rdfs:subClassOf)
+    Cell["ProductionCell<br/>Дільниця"] -.-> Asset
+    MC["MachiningCenter<br/>Обробний центр"] -.-> Asset
+    Sp["Spindle<br/>Шпиндель"] -.-> Asset
+    Ax["FeedAxes<br/>Осі подачі"] -.-> Asset
+    Tool["CuttingTool<br/>Ріжучий інструмент"] -.-> Asset
+    Acc["Accelerometer"] -.-> Sensor
+    Pt["TemperatureSensor<br/>Pt100"] -.-> Sensor
+    Enc["PositionEncoder"] -.-> Sensor
+    Vib["SpindleVibration<br/>(VibrationRms, Peak,<br/>CrestFactor, Kurtosis, BandEnergy)"] -.-> OP
+    BT["BearingTemperature"] -.-> OP
+    Pos["AxisPosition"] -.-> OP
+
+    %% Зв’язки між класами (властивості-зв’язки)
+    Cell -->|"hasPart (транзитивна,<br/>inverseOf partOf)"| MC
+    MC -->|hasPart| Sp
+    MC -->|hasPart| Ax
+    Sp -->|"usesTool (функціональна)"| Tool
+    Sp -->|hasSensor| Acc
+    Sp -->|hasSensor| Pt
+    Ax -->|hasSensor| Enc
+    Acc -->|observes| Vib
+    Pt -->|observes| BT
+    Enc -->|observes| Pos
+
+    Note["Asset, Sensor і ObservableProperty не перетинаються (owl:AllDisjointClasses).<br/>Індивіди: cell-1 hasPart cnc-1 ⇒ HermiT виводить cnc-1 partOf cell-1<br/>і транзитивно spindle-1 partOf cell-1"]
+
+    classDef top fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
+    classDef note fill:#FFFDE7,stroke:#999
+    class Asset,Sensor,OP top
+    class Note note

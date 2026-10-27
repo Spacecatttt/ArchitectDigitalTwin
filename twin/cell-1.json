@@ -1,0 +1,8 @@
+{
+  "attributes": {
+    "name": "Дільниця механообробки № 1",
+    "machines": [
+      "org.pzks:cnc-1"
+    ]
+  }
+}

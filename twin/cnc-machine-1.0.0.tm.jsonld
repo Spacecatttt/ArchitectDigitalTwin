@@ -1,0 +1,126 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "qudt": "http://qudt.org/vocab/unit/",
+      "cnc": "http://example.org/cnc#"
+    }
+  ],
+  "@type": [
+    "tm:ThingModel",
+    "cnc:MachiningCenter"
+  ],
+  "title": "Вертикально-фрезерний обробний центр з ЧПК",
+  "description": "Тип об’єкта ЛР 1–2, варіант 3. Сигнали реєстру S01–S13 агреговано шлюзом до стану з частотою 10 Гц.",
+  "version": {
+    "model": "1.0.0"
+  },
+  "links": [
+    {
+      "rel": "tm:submodel",
+      "instanceName": "axes",
+      "href": "http://web/twin/axes-1.0.0.tm.jsonld",
+      "type": "application/tm+json"
+    },
+    {
+      "rel": "tm:submodel",
+      "instanceName": "spindle",
+      "href": "http://web/twin/spindle-1.0.0.tm.jsonld",
+      "type": "application/tm+json"
+    },
+    {
+      "rel": "tm:submodel",
+      "instanceName": "vibration",
+      "href": "http://web/twin/vibration-1.0.0.tm.jsonld",
+      "type": "application/tm+json"
+    },
+    {
+      "rel": "tm:submodel",
+      "instanceName": "status",
+      "href": "http://web/twin/status-1.0.0.tm.jsonld",
+      "type": "application/tm+json"
+    },
+    {
+      "rel": "tm:submodel",
+      "instanceName": "sync",
+      "href": "http://web/twin/sync-1.0.0.tm.jsonld",
+      "type": "application/tm+json"
+    }
+  ],
+  "properties": {
+    "manufacturer": {
+      "title": "Виробник",
+      "type": "string",
+      "readOnly": true
+    },
+    "model": {
+      "title": "Модель верстата",
+      "type": "string",
+      "readOnly": true
+    },
+    "serialNo": {
+      "title": "Заводський номер",
+      "type": "string",
+      "readOnly": true
+    },
+    "controller": {
+      "title": "Система ЧПК",
+      "type": "string",
+      "readOnly": true
+    },
+    "maxSpindleSpeed": {
+      "title": "Максимальна частота обертання шпинделя",
+      "type": "number",
+      "unit": "qudt:REV-PER-MIN",
+      "minimum": 0,
+      "readOnly": true
+    },
+    "travelX": {
+      "title": "Переміщення по X",
+      "type": "number",
+      "unit": "qudt:MilliM",
+      "minimum": 0,
+      "readOnly": true
+    },
+    "travelY": {
+      "title": "Переміщення по Y",
+      "type": "number",
+      "unit": "qudt:MilliM",
+      "minimum": 0,
+      "readOnly": true
+    },
+    "travelZ": {
+      "title": "Переміщення по Z",
+      "type": "number",
+      "unit": "qudt:MilliM",
+      "minimum": 0,
+      "readOnly": true
+    },
+    "cell": {
+      "title": "Дільниця",
+      "description": "Зв’язок partOf: ідентифікатор двійника дільниці механообробки",
+      "type": "string",
+      "readOnly": true
+    }
+  },
+  "actions": {
+    "acknowledge-alarm": {
+      "title": "Квитувати сповіщення платформи",
+      "description": "Оператор підтверджує, що побачив сповіщення про автоколивання або перевантаження (FR-04)",
+      "input": {
+        "type": "string",
+        "title": "Хто квитує"
+      }
+    },
+    "reset-tool-wear": {
+      "title": "Скинути лічильник зносу інструмента",
+      "description": "Після заміни ріжучого інструмента (FR-05)",
+      "input": {
+        "type": "integer",
+        "title": "Номер інструмента",
+        "minimum": 1,
+        "maximum": 24
+      }
+    }
+  }
+}

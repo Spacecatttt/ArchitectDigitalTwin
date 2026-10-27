@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Двійник обробного центру з ЧПК</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 24px; background: #f4f6f9; color: #14202e; }
+  h1 { margin-bottom: 4px; } h2 { font-size: 15px; color: #5a6a7a; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: .04em; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+  .card { background: #fff; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+  .name { color: #5a6a7a; font-size: 13px; }
+  .value { font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .fresh { color: #1a7f37; } .late { color: #b58100; } .stale { color: #c62828; }
+  .bar { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .badge { padding: 4px 10px; border-radius: 999px; font-weight: 600; background: #e3e8ef; }
+  .badge.RUN { background: #d7f5dd; color: #1a7f37; } .badge.ALARM, .badge.E_STOP { background: #fde0e0; color: #c62828; }
+  .badge.FEED_HOLD, .badge.TOOL_CHANGE { background: #fff1c2; color: #8a6100; }
+  #alert { display: none; background: #c62828; color: #fff; padding: 10px 14px; border-radius: 8px; margin-top: 12px; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>Обробний центр з ЧПК <small id="thing"></small></h1>
+<div class="bar">
+  <span>Режим: <span class="badge" id="mode">—</span></span>
+  <span>Інструмент: <b id="tool">—</b></span>
+  <span>Давність даних: <b id="age">—</b></span>
+  <span>Повідомлення № <span id="seq">—</span></span>
+</div>
+<div id="alert">Ознаки автоколивань: зменште оберти або подачу (FR-04)</div>
+
+<h2>Осі подачі</h2><div class="grid" id="g-axes"></div>
+<h2>Шпиндель</h2><div class="grid" id="g-spindle"></div>
+<h2>Вібрація шпинделя</h2><div class="grid" id="g-vibration"></div>
+
+<script>
+const THING = "org.pzks:cnc-1";
+const SIGNALS = [  // feature, властивість, назва, одиниця, знаків після коми
+  ["axes", "positionX", "Положення X", "мм", 2],
+  ["axes", "positionY", "Положення Y", "мм", 2],
+  ["axes", "positionZ", "Положення Z", "мм", 2],
+  ["axes", "feedRate", "Подача", "мм/хв", 0],
+  ["axes", "currentX", "Струм приводу X", "А", 1],
+  ["spindle", "speed", "Оберти", "об/хв", 0],
+  ["spindle", "load", "Навантаження", "%", 1],
+  ["spindle", "bearingTemperature", "Температура підшипників", "°C", 1],
+  ["status", "coolantTemperature", "Температура МОР", "°C", 1],
+  ["vibration", "rms", "СКЗ", "g", 3],
+  ["vibration", "peak", "Пік", "g", 3],
+  ["vibration", "crestFactor", "Пік-фактор", "", 2],
+  ["vibration", "band3", "Енергія 800–1500 Гц", "g²", 3],
+];
+const CHATTER_G2 = 1.0;   // поріг енергії смуги власних частот (FR-04)
+const $ = id => document.getElementById(id);
+const state = {};          // кеш останнього відомого стану
+let sourceTs = 0;          // час останнього відліку на джерелі, мс
+
+$("thing").textContent = THING;
+for (const [f, p, name, unit] of SIGNALS) {
+  const grid = $(`g-${f === "status" ? "spindle" : f}`);
+  grid.insertAdjacentHTML("beforeend",
+    `<div class="card"><div class="name">${name}${unit ? ", " + unit : ""}</div>` +
+    `<div class="value" id="${f}-${p}">—</div></div>`);
+}
+
+function apply(features) {         // лише оновлює кеш; малює render()
+  for (const [f, block] of Object.entries(features))
+    state[f] = { ...(state[f] ?? {}), ...(block.properties ?? {}) };
+  if (state.sync?.ts) sourceTs = state.sync.ts;
+}
+
+function render() {                // власна частота подання — 4 рази на секунду
+  for (const [f, p, , , digits] of SIGNALS) {
+    const v = state[f]?.[p];
+    if (v !== undefined) $(`${f}-${p}`).textContent = Number(v).toFixed(digits);
+  }
+  const st = state.status ?? {};
+  if (st.mode) { $("mode").textContent = st.mode; $("mode").className = "badge " + st.mode; }
+  if (st.toolNumber !== undefined) $("tool").textContent = "T" + st.toolNumber;
+  if (state.sync) $("seq").textContent = state.sync.seq;
+  $("alert").style.display = (state.vibration?.band3 ?? 0) > CHATTER_G2 ? "block" : "none";
+  if (!sourceTs) return;
+  const age = (Date.now() - sourceTs) / 1000;
+  $("age").textContent = `${age.toFixed(1)} с`;
+  $("age").className = age < 2 ? "fresh" : age < 10 ? "late" : "stale";
+}
+
+fetch(`/api/2/things/${THING}`)
+  .then(r => r.json()).then(t => apply(t.features ?? {}));
+
+const events = new EventSource(`/api/2/things?ids=${THING}&fields=features`);
+events.onmessage = e => { if (e.data) apply(JSON.parse(e.data).features ?? {}); };
+
+setInterval(render, 250);
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "qudt": "http://qudt.org/vocab/unit/",
+      "cnc": "http://example.org/cnc#"
+    }
+  ],
+  "@type": [
+    "tm:ThingModel",
+    "cnc:Spindle"
+  ],
+  "title": "Шпиндель",
+  "version": {
+    "model": "1.0.0"
+  },
+  "properties": {
+    "speed": {
+      "@type": "cnc:SpindleSpeed",
+      "title": "Фактичні оберти шпинделя (S03)",
+      "type": "number",
+      "unit": "qudt:REV-PER-MIN",
+      "minimum": 0,
+      "maximum": 12000,
+      "observable": true,
+      "default": 0
+    },
+    "load": {
+      "@type": "cnc:SpindleLoad",
+      "title": "Навантаження шпинделя, макс. за 100 мс (S02)",
+      "type": "number",
+      "unit": "qudt:PERCENT",
+      "minimum": 0,
+      "maximum": 150,
+      "observable": true,
+      "default": 0
+    },
+    "bearingTemperature": {
+      "@type": "cnc:BearingTemperature",
+      "title": "Температура підшипників шпинделя (S09)",
+      "type": "number",
+      "unit": "qudt:DEG_C",
+      "minimum": 10,
+      "maximum": 80,
+      "observable": true,
+      "default": 20
+    }
+  }
+}

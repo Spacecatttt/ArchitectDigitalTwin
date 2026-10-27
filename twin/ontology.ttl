@@ -1,0 +1,185 @@
+@prefix :     <http://example.org/cnc#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/cnc> a owl:Ontology ;
+    rdfs:label "Онтологія цифрового двійника обробного центру з ЧПК"@uk ;
+    rdfs:comment "ЛР 2, варіант 3. Класи збігаються зі значеннями @type у моделях WoT TM каталогу twin/."@uk .
+
+#################################################################
+#  Класи верхнього рівня (попарно неперетинні)
+#################################################################
+
+:Asset a owl:Class ;
+    rdfs:label "Актив"@uk ;
+    rdfs:comment "Фізичний виробничий елемент (OME ISO 23247): обладнання, його вузли, дільниця."@uk .
+
+:Sensor a owl:Class ;
+    rdfs:label "Датчик"@uk ;
+    rdfs:comment "Засіб вимірювання, що спостерігає величину."@uk .
+
+:ObservableProperty a owl:Class ;
+    rdfs:label "Спостережувана величина"@uk ;
+    rdfs:comment "Фізична величина, яку вимірює датчик (сигнал реєстру ЛР 1)."@uk .
+
+[] a owl:AllDisjointClasses ;
+   owl:members ( :Asset :Sensor :ObservableProperty ) .
+
+#################################################################
+#  Підкласи активів
+#################################################################
+
+:ProductionCell a owl:Class ; rdfs:subClassOf :Asset ; rdfs:label "Дільниця механообробки"@uk .
+:MachiningCenter a owl:Class ; rdfs:subClassOf :Asset ; rdfs:label "Обробний центр з ЧПК"@uk .
+:Spindle a owl:Class ; rdfs:subClassOf :Asset ; rdfs:label "Шпиндель"@uk .
+:FeedAxes a owl:Class ; rdfs:subClassOf :Asset ; rdfs:label "Осі подачі"@uk .
+:CncController a owl:Class ; rdfs:subClassOf :Asset ; rdfs:label "Система ЧПК"@uk .
+:CoolantSystem a owl:Class ; rdfs:subClassOf :Asset ; rdfs:label "Система подачі МОР"@uk .
+:CuttingTool a owl:Class ; rdfs:subClassOf :Asset ; rdfs:label "Ріжучий інструмент"@uk .
+
+[] a owl:AllDisjointClasses ;
+   owl:members ( :ProductionCell :MachiningCenter :Spindle :FeedAxes :CncController :CoolantSystem :CuttingTool ) .
+
+#################################################################
+#  Підкласи датчиків
+#################################################################
+
+:Accelerometer a owl:Class ; rdfs:subClassOf :Sensor ; rdfs:label "Акселерометр"@uk .
+:TemperatureSensor a owl:Class ; rdfs:subClassOf :Sensor ; rdfs:label "Термоперетворювач опору Pt100"@uk .
+:PositionEncoder a owl:Class ; rdfs:subClassOf :Sensor ; rdfs:label "Датчик положення осі"@uk .
+:CurrentSensor a owl:Class ; rdfs:subClassOf :Sensor ; rdfs:label "Датчик струму приводу"@uk .
+:VirtualSensor a owl:Class ; rdfs:subClassOf :Sensor ;
+    rdfs:label "Віртуальний датчик ЧПК"@uk ;
+    rdfs:comment "Величина, яку ЧПК обчислює сама і віддає через OPC UA: навантаження, режим, номер інструмента."@uk .
+
+#################################################################
+#  Підкласи спостережуваних величин (= @type властивостей у TM)
+#################################################################
+
+:AxisPosition a owl:Class ; rdfs:subClassOf :ObservableProperty ; rdfs:label "Положення осі"@uk .
+:FeedRate a owl:Class ; rdfs:subClassOf :ObservableProperty ; rdfs:label "Подача"@uk .
+:MotorCurrent a owl:Class ; rdfs:subClassOf :ObservableProperty ; rdfs:label "Струм приводу"@uk .
+:SpindleSpeed a owl:Class ; rdfs:subClassOf :ObservableProperty ; rdfs:label "Частота обертання шпинделя"@uk .
+:SpindleLoad a owl:Class ; rdfs:subClassOf :ObservableProperty ; rdfs:label "Навантаження шпинделя"@uk .
+:BearingTemperature a owl:Class ; rdfs:subClassOf :ObservableProperty ; rdfs:label "Температура підшипників"@uk .
+:CoolantTemperature a owl:Class ; rdfs:subClassOf :ObservableProperty ; rdfs:label "Температура МОР"@uk .
+:SpindleVibration a owl:Class ; rdfs:subClassOf :ObservableProperty ; rdfs:label "Вібрація шпинделя"@uk .
+:VibrationRms a owl:Class ; rdfs:subClassOf :SpindleVibration ; rdfs:label "СКЗ вібрації"@uk .
+:VibrationPeak a owl:Class ; rdfs:subClassOf :SpindleVibration ; rdfs:label "Пікове значення вібрації"@uk .
+:CrestFactor a owl:Class ; rdfs:subClassOf :SpindleVibration ; rdfs:label "Пік-фактор"@uk .
+:Kurtosis a owl:Class ; rdfs:subClassOf :SpindleVibration ; rdfs:label "Ексцес"@uk .
+:BandEnergy a owl:Class ; rdfs:subClassOf :SpindleVibration ; rdfs:label "Енергія в частотній смузі"@uk .
+:MachineStatus a owl:Class ; rdfs:subClassOf :ObservableProperty ; rdfs:label "Стан ЧПК"@uk .
+:OperatingMode a owl:Class ; rdfs:subClassOf :MachineStatus ; rdfs:label "Режим роботи"@uk .
+:ToolNumber a owl:Class ; rdfs:subClassOf :MachineStatus ; rdfs:label "Номер інструмента"@uk .
+:AlarmCode a owl:Class ; rdfs:subClassOf :MachineStatus ; rdfs:label "Код аварії"@uk .
+
+#################################################################
+#  Властивості-зв’язки
+#################################################################
+
+:hasPart a owl:ObjectProperty , owl:TransitiveProperty ;
+    rdfs:label "має частину"@uk ;
+    rdfs:domain :Asset ; rdfs:range :Asset ;
+    owl:inverseOf :partOf .
+
+:partOf a owl:ObjectProperty , owl:TransitiveProperty ;
+    rdfs:label "є частиною"@uk ;
+    rdfs:domain :Asset ; rdfs:range :Asset .
+
+:hasSensor a owl:ObjectProperty ;
+    rdfs:label "має датчик"@uk ;
+    rdfs:domain :Asset ; rdfs:range :Sensor .
+
+:observes a owl:ObjectProperty ;
+    rdfs:label "спостерігає"@uk ;
+    rdfs:domain :Sensor ; rdfs:range :ObservableProperty .
+
+:usesTool a owl:ObjectProperty , owl:FunctionalProperty ;
+    rdfs:label "використовує інструмент"@uk ;
+    rdfs:comment "У кожен момент у шпинделі лише один інструмент."@uk ;
+    rdfs:domain :Spindle ; rdfs:range :CuttingTool .
+
+#################################################################
+#  Властивості-дані
+#################################################################
+
+:serialNo a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label "заводський номер"@uk ;
+    rdfs:domain :Asset ; rdfs:range xsd:string .
+
+:samplingRate a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label "частота опитування, Гц"@uk ;
+    rdfs:domain :Sensor ; rdfs:range xsd:decimal .
+
+:signalId a owl:DatatypeProperty ;
+    rdfs:label "ідентифікатор сигналу реєстру ЛР 1"@uk ;
+    rdfs:domain :ObservableProperty ; rdfs:range xsd:string .
+
+:thingId a owl:DatatypeProperty , owl:FunctionalProperty ;
+    rdfs:label "ідентифікатор двійника в Eclipse Ditto"@uk ;
+    rdfs:domain :Asset ; rdfs:range xsd:string .
+
+#################################################################
+#  Індивіди
+#################################################################
+
+:cell-1 a owl:NamedIndividual , :ProductionCell ;
+    rdfs:label "Дільниця механообробки № 1"@uk ;
+    :thingId "org.pzks:cell-1" ;
+    :hasPart :cnc-1 .
+
+:cnc-1 a owl:NamedIndividual , :MachiningCenter ;
+    rdfs:label "Обробний центр VMC-850"@uk ;
+    :thingId "org.pzks:cnc-1" ;
+    :serialNo "VMC-2023-0815" ;
+    :hasPart :spindle-1 , :axes-1 , :controller-1 , :coolant-1 .
+
+:spindle-1 a owl:NamedIndividual , :Spindle ;
+    :hasSensor :acc-1 , :pt100-spindle ;
+    :usesTool :tool-7 .
+
+:axes-1 a owl:NamedIndividual , :FeedAxes ;
+    :hasSensor :encoder-x , :current-x .
+
+:controller-1 a owl:NamedIndividual , :CncController ;
+    :hasSensor :cnc-load .
+
+:coolant-1 a owl:NamedIndividual , :CoolantSystem ;
+    :hasSensor :pt100-coolant .
+
+:tool-7 a owl:NamedIndividual , :CuttingTool ;
+    rdfs:label "Кінцева фреза Ø12, z = 4"@uk .
+
+:acc-1 a owl:NamedIndividual , :Accelerometer ;
+    :samplingRate "5000"^^xsd:decimal ;
+    :observes :spindle-vibration .
+
+:pt100-spindle a owl:NamedIndividual , :TemperatureSensor ;
+    :samplingRate "0.1"^^xsd:decimal ;
+    :observes :bearing-temperature .
+
+:pt100-coolant a owl:NamedIndividual , :TemperatureSensor ;
+    :samplingRate "0.1"^^xsd:decimal ;
+    :observes :coolant-temperature .
+
+:encoder-x a owl:NamedIndividual , :PositionEncoder ;
+    :samplingRate "10"^^xsd:decimal ;
+    :observes :position-x .
+
+:current-x a owl:NamedIndividual , :CurrentSensor ;
+    :samplingRate "25"^^xsd:decimal ;
+    :observes :current-x-value .
+
+:cnc-load a owl:NamedIndividual , :VirtualSensor ;
+    :samplingRate "25"^^xsd:decimal ;
+    :observes :spindle-load .
+
+:spindle-vibration a owl:NamedIndividual , :SpindleVibration ; :signalId "S01" .
+:spindle-load a owl:NamedIndividual , :SpindleLoad ; :signalId "S02" .
+:position-x a owl:NamedIndividual , :AxisPosition ; :signalId "S04" .
+:current-x-value a owl:NamedIndividual , :MotorCurrent ; :signalId "S08" .
+:bearing-temperature a owl:NamedIndividual , :BearingTemperature ; :signalId "S09" .
+:coolant-temperature a owl:NamedIndividual , :CoolantTemperature ; :signalId "S10" .

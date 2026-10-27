@@ -1,0 +1,63 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "qudt": "http://qudt.org/vocab/unit/",
+      "cnc": "http://example.org/cnc#"
+    }
+  ],
+  "@type": [
+    "tm:ThingModel",
+    "cnc:MachineStatus"
+  ],
+  "title": "Стан ЧПК і допоміжних систем",
+  "version": {
+    "model": "1.0.0"
+  },
+  "properties": {
+    "mode": {
+      "@type": "cnc:OperatingMode",
+      "title": "Режим роботи ЧПК (S11)",
+      "type": "string",
+      "enum": [
+        "OFF",
+        "IDLE",
+        "RUN",
+        "FEED_HOLD",
+        "TOOL_CHANGE",
+        "ALARM",
+        "E_STOP"
+      ],
+      "observable": true,
+      "default": "OFF"
+    },
+    "toolNumber": {
+      "@type": "cnc:ToolNumber",
+      "title": "Номер активного інструмента (S12)",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 24,
+      "observable": true,
+      "default": 0
+    },
+    "alarmCode": {
+      "@type": "cnc:AlarmCode",
+      "title": "Код активної аварії ЧПК, 0 — немає (S13)",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 65535,
+      "observable": true,
+      "default": 0
+    },
+    "coolantTemperature": {
+      "@type": "cnc:CoolantTemperature",
+      "title": "Температура МОР (S10)",
+      "type": "number",
+      "unit": "qudt:DEG_C",
+      "minimum": 10,
+      "maximum": 50,
+      "observable": true,
+      "default": 20
+    }
+  }
+}
