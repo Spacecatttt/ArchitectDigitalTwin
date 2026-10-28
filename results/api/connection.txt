@@ -1,0 +1,2 @@
+201 {"id":"mqtt-telemetry","name":"mqtt-telemetry","connectionType":"mqtt","connectionStatus":"open","uri":"tcp://mosquitto:1883","sources":[{"addresses":["pzks/+/telemetry"],"consumerCount":1,"qos":1,"authorizationContext":["integration:telemetry"],"headerMapping":{},"payloadMapping":["telemetry"],"rep
+Стан з’єднання: open

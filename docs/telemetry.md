@@ -11,6 +11,9 @@ docker compose exec -T mosquitto mosquitto_pub -t pzks/test -m "перевірк
 ```
 
 <!-- AUTO:broker_test -->
+```
+pzks/test перевірка
+```
 <!-- /AUTO:broker_test -->
 
 ## Схема повідомлення
@@ -62,11 +65,78 @@ curl -u ditto:ditto http://localhost:8080/api/2/things/org.pzks:cnc-1/features
 ```
 
 <!-- AUTO:connection -->
+```
+201 {"id":"mqtt-telemetry","name":"mqtt-telemetry","connectionType":"mqtt","connectionStatus":"open","uri":"tcp://mosquitto:1883","sources":[{"addresses":["pzks/+/telemetry"],"consumerCount":1,"qos":1,"authorizationContext":["integration:telemetry"],"headerMapping":{},"payloadMapping":["telemetry"],"rep
+Стан з’єднання: open
+```
 <!-- /AUTO:connection -->
 
 Після десяти повідомлень `features/sync/properties/seq` = 10 — номер останнього повідомлення:
 
 <!-- AUTO:features_after -->
+```json
+{
+  "axes": {
+    "definition": [
+      "http://web/twin/axes-1.0.0.tm.jsonld"
+    ],
+    "properties": {
+      "positionX": 292.725,
+      "positionY": 260.004,
+      "positionZ": 150,
+      "feedRate": 1200,
+      "currentX": 7.86
+    }
+  },
+  "spindle": {
+    "definition": [
+      "http://web/twin/spindle-1.0.0.tm.jsonld"
+    ],
+    "properties": {
+      "speed": 8000.4,
+      "load": 49.2,
+      "bearingTemperature": 31.05
+    }
+  },
+  "vibration": {
+    "definition": [
+      "http://web/twin/vibration-1.0.0.tm.jsonld"
+    ],
+    "properties": {
+      "rms": 0.941,
+      "peak": 3.0715,
+      "crestFactor": 3.264,
+      "kurtosis": 3.107,
+      "band1": 0.02,
+      "band2": 0.53127,
+      "band3": 0.07084,
+      "band4": 0.02656
+    }
+  },
+  "status": {
+    "definition": [
+      "http://web/twin/status-1.0.0.tm.jsonld"
+    ],
+    "properties": {
+      "mode": "RUN",
+      "toolNumber": 12,
+      "alarmCode": 0,
+      "program": "HOUSING_A.MPF",
+      "partCount": 0,
+      "coolantTemperature": 22.51
+    }
+  },
+  "sync": {
+    "definition": [
+      "http://web/twin/sync-1.0.0.tm.jsonld"
+    ],
+    "properties": {
+      "seq": 10,
+      "ts": 1793214094681
+    }
+  }
+… (ще 1 рядків, повністю — results/api/features_after.txt)
+```
 <!-- /AUTO:features_after -->
 
 Суб’єкт з’єднання `integration:telemetry` у політиці `twin/policy.json` має лише `WRITE` на `thing:/features`: з’єднання може оновлювати стан, але не паспорт, політику чи інші двійники без такої політики (найменші привілеї, NFR-06 ЛР 1).
