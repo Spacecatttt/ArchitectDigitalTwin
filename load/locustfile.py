@@ -39,7 +39,7 @@ class Gateway(User):
 
     def on_start(self):
         self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-        self.client.connect("localhost", 1883)
+        self.client.connect("127.0.0.1", 1883)   # не localhost (::1 у Windows)
         self.client.loop_start()
 
     def on_stop(self):

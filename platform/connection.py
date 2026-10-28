@@ -5,7 +5,7 @@ from pathlib import Path
 import requests
 
 HERE = Path(__file__).parent
-URL = "http://localhost:8080/api/2/connections/mqtt-telemetry"
+URL = "http://127.0.0.1:8080/api/2/connections/mqtt-telemetry"
 DEVOPS = ("devops", "foobar")          # облікові дані DevOps за замовчуванням
 
 conn = json.loads((HERE / "connection.json").read_text(encoding="utf-8"))

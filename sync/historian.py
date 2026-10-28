@@ -11,9 +11,9 @@ import time
 import requests
 from influxdb_client import InfluxDBClient, Point, WriteOptions
 
-SSE_URL = "http://localhost:8090/api/2/things"   # проксі web: лише читання
+SSE_URL = "http://127.0.0.1:8090/api/2/things"   # проксі web: лише читання; не localhost: у Windows він спершу йде на ::1, а порти стенда відкриті лише на 127.0.0.1
 THING = "org.pzks:cnc-1"
-INFLUX = {"url": "http://localhost:8086", "token": "dt-lab-token", "org": "pzks"}
+INFLUX = {"url": "http://127.0.0.1:8086", "token": "dt-lab-token", "org": "pzks"}
 BUCKET = "twin"
 STATE_FEATURES = ("axes", "spindle", "vibration", "status")
 

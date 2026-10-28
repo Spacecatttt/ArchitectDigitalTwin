@@ -20,7 +20,7 @@ import time
 
 import paho.mqtt.client as mqtt
 
-BROKER, PORT = "localhost", 1883
+BROKER, PORT = "127.0.0.1", 1883   # не localhost: у Windows він спершу йде на ::1, а порти стенда відкриті лише на 127.0.0.1
 FIELDS = ["seq", "ts", "x", "y", "z", "f", "ix", "s", "ld", "tb",
           "md", "tl", "al", "pg", "pc", "tc", "vr", "vp", "vc", "vk", "b1", "b2", "b3", "b4"]
 CYCLE = 120.0        # с, цикл обробки однієї деталі

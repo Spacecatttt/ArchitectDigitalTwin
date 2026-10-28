@@ -1,0 +1,9 @@
+{'rate': 5, 'actual_rate': 5, 'sent': 303, 'received': 303, 'loss_pct': 0.0, 'p50_ms': 10, 'p95_ms': 18}
+{'rate': 10, 'actual_rate': 10, 'sent': 605, 'received': 605, 'loss_pct': 0.0, 'p50_ms': 11, 'p95_ms': 18}
+{'rate': 25, 'actual_rate': 25, 'sent': 1484, 'received': 1484, 'loss_pct': 0.0, 'p50_ms': 15, 'p95_ms': 30}
+{'rate': 50, 'actual_rate': 50, 'sent': 3016, 'received': 3016, 'loss_pct': 0.0, 'p50_ms': 22, 'p95_ms': 46}
+{'rate': 100, 'actual_rate': 100, 'sent': 6034, 'received': 6034, 'loss_pct': 0.0, 'p50_ms': 34, 'p95_ms': 67}
+{'rate': 200, 'actual_rate': 200, 'sent': 11879, 'received': 11879, 'loss_pct': 0.0, 'p50_ms': 78, 'p95_ms': 466}
+{'rate': 400, 'actual_rate': 397, 'sent': 24023, 'received': 14330, 'loss_pct': 40.35, 'p50_ms': 4499, 'p95_ms': 5415}
+Пропущено ревізій: 0 (застосовані платформою, але не отримані істориком)
+Графік: results/latency_vs_load.png

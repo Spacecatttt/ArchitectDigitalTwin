@@ -13,7 +13,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from influxdb_client import InfluxDBClient
 
-INFLUX = {"url": "http://localhost:8086", "token": "dt-lab-token", "org": "pzks"}
+INFLUX = {"url": "http://127.0.0.1:8086", "token": "dt-lab-token", "org": "pzks"}
 TARGET_MS = 200   # NFR-01 ЛР 1, мс
 
 
@@ -74,7 +74,7 @@ ax.set_xscale("log")
 ax.set_yscale("log")
 ax.set_xlabel("Частота телеметрії, повідомлень/с")
 ax.set_ylabel("Затримка синхронізації, мс")
-ax.set_title("Обробний центр з ЧПК (cnc-1): затримка синхронізації під навантаженням")
+ax.set_title("Обробний центр з ЧПК (cnc-1): затримка синхронізації під навантаженням", fontsize=10)
 ax.grid(True, which="both", alpha=0.3)
 ax.legend()
 fig.tight_layout()

@@ -13,8 +13,8 @@ import requests
 from influxdb_client import InfluxDBClient
 
 THING = "org.pzks:cnc-1"
-API = f"http://localhost:8090/api/2/things/{THING}"
-INFLUX = {"url": "http://localhost:8086", "token": "dt-lab-token", "org": "pzks"}
+API = f"http://127.0.0.1:8090/api/2/things/{THING}"
+INFLUX = {"url": "http://127.0.0.1:8086", "token": "dt-lab-token", "org": "pzks"}
 TARGET_MS = 200   # NFR-01 ЛР 1: затримка синхронізації p95, мс
 
 # поле пристрою → (feature, властивість моделі)
