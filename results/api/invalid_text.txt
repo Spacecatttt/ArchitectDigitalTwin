@@ -1,0 +1,11 @@
+{
+  "status": 400,
+  "error": "wot:payload.validation.error",
+  "message": "The provided payload did not conform to the specified WoT (Web of Things) model.",
+  "description": "The Feature <spindle>'s property </load> contained validation errors, check the validation details.",
+  "validationDetails": {
+    "/features/spindle/properties/load": [
+      ": {maximum=must have a maximum value of 150}"
+    ]
+  }
+}

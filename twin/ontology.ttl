@@ -35,12 +35,17 @@
 :MachiningCenter a owl:Class ; rdfs:subClassOf :Asset ; rdfs:label "Обробний центр з ЧПК"@uk .
 :Spindle a owl:Class ; rdfs:subClassOf :Asset ; rdfs:label "Шпиндель"@uk .
 :FeedAxes a owl:Class ; rdfs:subClassOf :Asset ; rdfs:label "Осі подачі"@uk .
-:CncController a owl:Class ; rdfs:subClassOf :Asset ; rdfs:label "Система ЧПК"@uk .
+:CncController a owl:Class ; rdfs:subClassOf :Asset ;
+    rdfs:label "Система ЧПК"@uk ;
+    rdfs:comment "Функціональний блок status: режим, інструмент, аварія, NC-програма, лічильник деталей, температура МОР."@uk .
 :CoolantSystem a owl:Class ; rdfs:subClassOf :Asset ; rdfs:label "Система подачі МОР"@uk .
 :CuttingTool a owl:Class ; rdfs:subClassOf :Asset ; rdfs:label "Ріжучий інструмент"@uk .
+:VibrationDaq a owl:Class ; rdfs:subClassOf :Asset ;
+    rdfs:label "Модуль DAQ вібрації"@uk ;
+    rdfs:comment "Граничний модуль збирання (VibrationDaq ЛР 1): АЦП 16 біт, обчислює 8 ознак вібрації. Функціональний блок vibration."@uk .
 
 [] a owl:AllDisjointClasses ;
-   owl:members ( :ProductionCell :MachiningCenter :Spindle :FeedAxes :CncController :CoolantSystem :CuttingTool ) .
+   owl:members ( :ProductionCell :MachiningCenter :Spindle :FeedAxes :CncController :CoolantSystem :CuttingTool :VibrationDaq ) .
 
 #################################################################
 #  Підкласи датчиків
@@ -75,6 +80,8 @@
 :OperatingMode a owl:Class ; rdfs:subClassOf :MachineStatus ; rdfs:label "Режим роботи"@uk .
 :ToolNumber a owl:Class ; rdfs:subClassOf :MachineStatus ; rdfs:label "Номер інструмента"@uk .
 :AlarmCode a owl:Class ; rdfs:subClassOf :MachineStatus ; rdfs:label "Код аварії"@uk .
+:NcProgram a owl:Class ; rdfs:subClassOf :MachineStatus ; rdfs:label "Активна NC-програма"@uk .
+:PartCount a owl:Class ; rdfs:subClassOf :MachineStatus ; rdfs:label "Лічильник деталей"@uk .
 
 #################################################################
 #  Властивості-зв’язки
@@ -135,7 +142,7 @@
     rdfs:label "Обробний центр VMC-850"@uk ;
     :thingId "org.pzks:cnc-1" ;
     :serialNo "VMC-2023-0815" ;
-    :hasPart :spindle-1 , :axes-1 , :controller-1 , :coolant-1 .
+    :hasPart :spindle-1 , :axes-1 , :controller-1 , :coolant-1 , :daq-1 .
 
 :spindle-1 a owl:NamedIndividual , :Spindle ;
     :hasSensor :acc-1 , :pt100-spindle ;
@@ -146,6 +153,9 @@
 
 :controller-1 a owl:NamedIndividual , :CncController ;
     :hasSensor :cnc-load .
+
+:daq-1 a owl:NamedIndividual , :VibrationDaq ;
+    rdfs:label "Модуль DAQ 16 біт на граничному ПК"@uk .
 
 :coolant-1 a owl:NamedIndividual , :CoolantSystem ;
     :hasSensor :pt100-coolant .

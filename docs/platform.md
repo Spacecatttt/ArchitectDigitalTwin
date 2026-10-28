@@ -1,6 +1,6 @@
 # Платформа цифрового двійника: розгортання і вибір
 
-ЛР 2, заняття 1. Об’єкт — обробний центр з ЧПК (варіант 3), той самий, що в ЛР 1.
+ЛР 2, заняття 1. Об’єкт — обробний центр з ЧПК (варіант 3).
 
 ## Розгортання
 
@@ -150,6 +150,7 @@ curl -u ditto:ditto http://localhost:8080/api/2/policies/org.pzks:test-1
 | Температура підшипників | стан | `features/spindle/properties/bearingTemperature` | S09 |
 | Ознаки вібрації (СКЗ, пік, пік-фактор, ексцес, 4 смуги) | стан | `features/vibration/properties/…` | S01 (через шлюз, FR-02) |
 | Режим, інструмент, код аварії, температура МОР | стан | `features/status/properties/mode`, `toolNumber`, `alarmCode`, `coolantTemperature` | S11, S12, S13, S10 |
+| NC-програма, лічильник деталей | стан (атрибути ЧПК за зміною) | `features/status/properties/program`, `partCount` | FR-01 ЛР 1 |
 | Номер повідомлення й час відліку | службовий стан | `features/sync/properties/seq`, `ts` | шлюз (для NFR-01) |
 | Квитувати сповіщення | функція | повідомлення `inbox/messages/acknowledge-alarm` | оператор (FR-04) |
 | Скинути лічильник зносу інструмента | функція | повідомлення `inbox/messages/reset-tool-wear` | оператор після заміни інструмента (FR-05) |

@@ -23,6 +23,7 @@ FIELDS = {
     "f": ("axes", "feedRate"), "ix": ("axes", "currentX"),
     "s": ("spindle", "speed"), "ld": ("spindle", "load"), "tb": ("spindle", "bearingTemperature"),
     "md": ("status", "mode"), "tl": ("status", "toolNumber"), "al": ("status", "alarmCode"),
+    "pg": ("status", "program"), "pc": ("status", "partCount"),
     "tc": ("status", "coolantTemperature"),
     "vr": ("vibration", "rms"), "vp": ("vibration", "peak"), "vc": ("vibration", "crestFactor"),
     "vk": ("vibration", "kurtosis"), "b1": ("vibration", "band1"), "b2": ("vibration", "band2"),

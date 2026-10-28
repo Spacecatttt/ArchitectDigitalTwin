@@ -10,6 +10,8 @@ graph TB
     Sp["Spindle<br/>Шпиндель"] -.-> Asset
     Ax["FeedAxes<br/>Осі подачі"] -.-> Asset
     Tool["CuttingTool<br/>Ріжучий інструмент"] -.-> Asset
+    Daq["VibrationDaq<br/>Модуль DAQ вібрації"] -.-> Asset
+    Ctrl["CncController<br/>Система ЧПК"] -.-> Asset
     Acc["Accelerometer"] -.-> Sensor
     Pt["TemperatureSensor<br/>Pt100"] -.-> Sensor
     Enc["PositionEncoder"] -.-> Sensor
@@ -21,6 +23,8 @@ graph TB
     Cell -->|"hasPart (транзитивна,<br/>inverseOf partOf)"| MC
     MC -->|hasPart| Sp
     MC -->|hasPart| Ax
+    MC -->|hasPart| Daq
+    MC -->|hasPart| Ctrl
     Sp -->|"usesTool (функціональна)"| Tool
     Sp -->|hasSensor| Acc
     Sp -->|hasSensor| Pt

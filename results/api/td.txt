@@ -1,0 +1,571 @@
+{
+  "@context": [
+    "https://www.w3.org/2022/wot/td/v1.1",
+    {
+      "qudt": "http://qudt.org/vocab/unit/",
+      "cnc": "http://example.org/cnc#"
+    }
+  ],
+  "title": "Вертикально-фрезерний обробний центр з ЧПК",
+  "description": "Тип об’єкта ЛР 1–2, варіант 3. Сигнали реєстру S01–S13 агреговано шлюзом до стану з частотою 10 Гц.",
+  "@type": [
+    "Thing",
+    "cnc:MachiningCenter"
+  ],
+  "id": "urn:org.pzks:cnc-1",
+  "base": "http://localhost:8080/api/2/things/org.pzks:cnc-1/",
+  "version": {
+    "model": "1.0.0",
+    "instance": "1.0.0"
+  },
+  "links": [
+    {
+      "rel": "type",
+      "href": "http://web/twin/cnc-machine-1.0.0.tm.jsonld",
+      "type": "application/tm+json"
+    },
+    {
+      "rel": "item",
+      "type": "application/td+json",
+      "href": "features/axes"
+    },
+    {
+      "rel": "item",
+      "type": "application/td+json",
+      "href": "features/spindle"
+    },
+    {
+      "rel": "item",
+      "type": "application/td+json",
+      "href": "features/vibration"
+    },
+    {
+      "rel": "item",
+      "type": "application/td+json",
+      "href": "features/status"
+    },
+    {
+      "rel": "item",
+      "type": "application/td+json",
+      "href": "features/sync"
+    }
+  ],
+  "security": "basic_sc",
+  "securityDefinitions": {
+    "basic_sc": {
+      "in": "header",
+      "scheme": "basic"
+    }
+  },
+  "support": "https://www.eclipse.dev/ditto/",
+  "created": "2026-10-28T18:15:08.037249671Z",
+  "forms": [
+    {
+      "op": "readallproperties",
+      "href": "attributes",
+      "htv:methodName": "GET",
+      "contentType": "application/json",
+      "additionalResponses": [
+        {
+          "success": false,
+          "schema": "dittoError"
+        }
+      ]
+    },
+    {
+      "op": "readmultipleproperties",
+      "href": "attributes",
+      "htv:methodName": "GET",
+      "contentType": "application/json",
+      "additionalResponses": [
+        {
+          "success": false,
+          "schema": "dittoError"
+        }
+      ]
+    },
+    {
+      "op": "writeallproperties",
+      "href": "attributes",
+      "htv:methodName": "PUT",
+      "contentType": "application/json",
+      "additionalResponses": [
+        {
+          "success": false,
+          "schema": "dittoError"
+        }
+      ]
+    },
+    {
+      "op": "writemultipleproperties",
+      "href": "attributes",
+      "htv:methodName": "PATCH",
+      "contentType": "application/merge-patch+json",
+      "additionalResponses": [
+        {
+          "success": false,
+          "schema": "dittoError"
+        }
+      ]
+    },
+    {
+      "op": [
+        "observeallproperties",
+        "unobserveallproperties"
+      ],
+      "href": "attributes",
+      "htv:methodName": "GET",
+      "subprotocol": "sse",
+      "contentType": "text/event-stream",
+      "additionalResponses": [
+        {
+          "success": false,
+          "schema": "dittoError"
+        }
+      ]
+    },
+    {
+      "op": [
+        "subscribeallevents",
+        "unsubscribeallevents"
+      ],
+      "href": "outbox/messages",
+      "htv:methodName": "GET",
+      "subprotocol": "sse",
+      "contentType": "text/event-stream",
+      "additionalResponses": [
+        {
+          "success": false,
+          "schema": "dittoError"
+        }
+      ]
+    }
+  ],
+  "properties": {
+    "manufacturer": {
+      "title": "Виробник",
+      "type": "string",
+      "readOnly": true,
+      "observable": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "href": "attributes/manufacturer",
+          "htv:methodName": "GET",
+          "contentType": "application/json",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        },
+        {
+          "op": [
+            "observeproperty",
+            "unobserveproperty"
+          ],
+          "href": "attributes/manufacturer",
+          "htv:methodName": "GET",
+          "subprotocol": "sse",
+          "contentType": "text/event-stream",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        }
+      ]
+    },
+    "model": {
+      "title": "Модель верстата",
+      "type": "string",
+      "readOnly": true,
+      "observable": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "href": "attributes/model",
+          "htv:methodName": "GET",
+          "contentType": "application/json",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        },
+        {
+          "op": [
+            "observeproperty",
+            "unobserveproperty"
+          ],
+          "href": "attributes/model",
+          "htv:methodName": "GET",
+          "subprotocol": "sse",
+          "contentType": "text/event-stream",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        }
+      ]
+    },
+    "serialNo": {
+      "title": "Заводський номер",
+      "type": "string",
+      "readOnly": true,
+      "observable": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "href": "attributes/serialNo",
+          "htv:methodName": "GET",
+          "contentType": "application/json",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        },
+        {
+          "op": [
+            "observeproperty",
+            "unobserveproperty"
+          ],
+          "href": "attributes/serialNo",
+          "htv:methodName": "GET",
+          "subprotocol": "sse",
+          "contentType": "text/event-stream",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        }
+      ]
+    },
+    "controller": {
+      "title": "Система ЧПК",
+      "type": "string",
+      "readOnly": true,
+      "observable": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "href": "attributes/controller",
+          "htv:methodName": "GET",
+          "contentType": "application/json",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        },
+        {
+          "op": [
+            "observeproperty",
+            "unobserveproperty"
+          ],
+          "href": "attributes/controller",
+          "htv:methodName": "GET",
+          "subprotocol": "sse",
+          "contentType": "text/event-stream",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        }
+      ]
+    },
+    "maxSpindleSpeed": {
+      "title": "Максимальна частота обертання шпинделя",
+      "type": "number",
+      "unit": "qudt:REV-PER-MIN",
+      "minimum": 0,
+      "readOnly": true,
+      "observable": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "href": "attributes/maxSpindleSpeed",
+          "htv:methodName": "GET",
+          "contentType": "application/json",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        },
+        {
+          "op": [
+            "observeproperty",
+            "unobserveproperty"
+          ],
+          "href": "attributes/maxSpindleSpeed",
+          "htv:methodName": "GET",
+          "subprotocol": "sse",
+          "contentType": "text/event-stream",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        }
+      ]
+    },
+    "travelX": {
+      "title": "Переміщення по X",
+      "type": "number",
+      "unit": "qudt:MilliM",
+      "minimum": 0,
+      "readOnly": true,
+      "observable": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "href": "attributes/travelX",
+          "htv:methodName": "GET",
+          "contentType": "application/json",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        },
+        {
+          "op": [
+            "observeproperty",
+            "unobserveproperty"
+          ],
+          "href": "attributes/travelX",
+          "htv:methodName": "GET",
+          "subprotocol": "sse",
+          "contentType": "text/event-stream",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        }
+      ]
+    },
+    "travelY": {
+      "title": "Переміщення по Y",
+      "type": "number",
+      "unit": "qudt:MilliM",
+      "minimum": 0,
+      "readOnly": true,
+      "observable": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "href": "attributes/travelY",
+          "htv:methodName": "GET",
+          "contentType": "application/json",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        },
+        {
+          "op": [
+            "observeproperty",
+            "unobserveproperty"
+          ],
+          "href": "attributes/travelY",
+          "htv:methodName": "GET",
+          "subprotocol": "sse",
+          "contentType": "text/event-stream",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        }
+      ]
+    },
+    "travelZ": {
+      "title": "Переміщення по Z",
+      "type": "number",
+      "unit": "qudt:MilliM",
+      "minimum": 0,
+      "readOnly": true,
+      "observable": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "href": "attributes/travelZ",
+          "htv:methodName": "GET",
+          "contentType": "application/json",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        },
+        {
+          "op": [
+            "observeproperty",
+            "unobserveproperty"
+          ],
+          "href": "attributes/travelZ",
+          "htv:methodName": "GET",
+          "subprotocol": "sse",
+          "contentType": "text/event-stream",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        }
+      ]
+    },
+    "cell": {
+      "title": "Дільниця",
+      "description": "Зв’язок partOf: ідентифікатор двійника дільниці механообробки",
+      "type": "string",
+      "readOnly": true,
+      "observable": true,
+      "forms": [
+        {
+          "op": "readproperty",
+          "href": "attributes/cell",
+          "htv:methodName": "GET",
+          "contentType": "application/json",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        },
+        {
+          "op": [
+            "observeproperty",
+            "unobserveproperty"
+          ],
+          "href": "attributes/cell",
+          "htv:methodName": "GET",
+          "subprotocol": "sse",
+          "contentType": "text/event-stream",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "actions": {
+    "acknowledge-alarm": {
+      "title": "Квитувати сповіщення платформи",
+      "description": "Оператор підтверджує, що побачив сповіщення про автоколивання або перевантаження (FR-04)",
+      "input": {
+        "type": "string",
+        "title": "Хто квитує"
+      },
+      "synchronous": true,
+      "forms": [
+        {
+          "op": "invokeaction",
+          "href": "inbox/messages/acknowledge-alarm",
+          "htv:methodName": "POST",
+          "contentType": "application/json",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        }
+      ]
+    },
+    "reset-tool-wear": {
+      "title": "Скинути лічильник зносу інструмента",
+      "description": "Після заміни ріжучого інструмента (FR-05)",
+      "input": {
+        "type": "integer",
+        "title": "Номер інструмента",
+        "minimum": 1,
+        "maximum": 24
+      },
+      "synchronous": true,
+      "forms": [
+        {
+          "op": "invokeaction",
+          "href": "inbox/messages/reset-tool-wear",
+          "htv:methodName": "POST",
+          "contentType": "application/json",
+          "additionalResponses": [
+            {
+              "success": false,
+              "schema": "dittoError"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "schemaDefinitions": {
+    "dittoError": {
+      "type": "object",
+      "title": "Ditto error.",
+      "description": "Provides additional information about an occurred error and how to resolve it.",
+      "properties": {
+        "error": {
+          "type": "string",
+          "title": "Error code identifier.",
+          "description": "The error code or identifier that uniquely identifies the error."
+        },
+        "description": {
+          "type": "string",
+          "title": "Error description.",
+          "description": "Contains further information about the error e.g. a hint what caused the problem and how to solve it."
+        },
+        "status": {
+          "type": "integer",
+          "title": "Status code.",
+          "description": "The status code of the error with HTTP status code semantics (e.g.: 4xx for user errors, 5xx for server errors).",
+          "minimum": 400,
+          "maximum": 599
+        },
+        "href": {
+          "type": "string",
+          "title": "Error link.",
+          "description": "A link to further information about the error and how to fix it.",
+          "format": "uri"
+        },
+        "message": {
+          "type": "string",
+          "title": "Error message.",
+          "description": "The human readable message that explains what went wrong during the execution of a command/message."
+        }
+      },
+      "required": [
+        "status",
+        "error",
+        "message"
+      ]
+    }
+  }
+}

@@ -13,7 +13,8 @@ function mapToDittoProtocolMsg(headers, textPayload, bytePayload, contentType) {
       rms: m.vr, peak: m.vp, crestFactor: m.vc, kurtosis: m.vk,
       band1: m.b1, band2: m.b2, band3: m.b3, band4: m.b4 } },
     status: { properties: {
-      mode: m.md, toolNumber: m.tl, alarmCode: m.al, coolantTemperature: m.tc } },
+      mode: m.md, toolNumber: m.tl, alarmCode: m.al, program: m.pg, partCount: m.pc,
+      coolantTemperature: m.tc } },
     sync: { properties: { seq: m.seq, ts: m.ts } }
   };
   return Ditto.buildDittoProtocolMsg("org.pzks", name, "things", "twin",

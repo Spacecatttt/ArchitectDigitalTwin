@@ -24,6 +24,8 @@
 <div class="bar">
   <span>Режим: <span class="badge" id="mode">—</span></span>
   <span>Інструмент: <b id="tool">—</b></span>
+  <span>Програма: <b id="prog">—</b></span>
+  <span>Деталей: <b id="parts">—</b></span>
   <span>Давність даних: <b id="age">—</b></span>
   <span>Повідомлення № <span id="seq">—</span></span>
 </div>
@@ -77,6 +79,8 @@ function render() {                // власна частота подання
   const st = state.status ?? {};
   if (st.mode) { $("mode").textContent = st.mode; $("mode").className = "badge " + st.mode; }
   if (st.toolNumber !== undefined) $("tool").textContent = "T" + st.toolNumber;
+  if (st.program) $("prog").textContent = st.program;
+  if (st.partCount !== undefined) $("parts").textContent = st.partCount;
   if (state.sync) $("seq").textContent = state.sync.seq;
   $("alert").style.display = (state.vibration?.band3 ?? 0) > CHATTER_G2 ? "block" : "none";
   if (!sourceTs) return;

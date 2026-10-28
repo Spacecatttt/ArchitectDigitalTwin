@@ -8,7 +8,7 @@
   ],
   "@type": [
     "tm:ThingModel",
-    "cnc:MachineStatus"
+    "cnc:CncController"
   ],
   "title": "Стан ЧПК і допоміжних систем",
   "version": {
@@ -46,6 +46,23 @@
       "type": "integer",
       "minimum": 0,
       "maximum": 65535,
+      "observable": true,
+      "default": 0
+    },
+    "program": {
+      "@type": "cnc:NcProgram",
+      "title": "Активна NC-програма (FR-01, за зміною)",
+      "type": "string",
+      "maxLength": 64,
+      "observable": true,
+      "default": ""
+    },
+    "partCount": {
+      "@type": "cnc:PartCount",
+      "title": "Лічильник оброблених деталей (FR-01, за зміною)",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 999999,
       "observable": true,
       "default": 0
     },

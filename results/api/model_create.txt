@@ -1,0 +1,77 @@
+{
+  "thingId": "org.pzks:cnc-1",
+  "policyId": "org.pzks:cnc-1",
+  "definition": "http://web/twin/cnc-machine-1.0.0.tm.jsonld",
+  "attributes": {
+    "manufacturer": "Верстатобудівний завод",
+    "model": "VMC-850",
+    "serialNo": "VMC-2023-0815",
+    "controller": "SINUMERIK 828D",
+    "maxSpindleSpeed": 12000,
+    "travelX": 762,
+    "travelY": 406,
+    "travelZ": 508,
+    "cell": "org.pzks:cell-1"
+  },
+  "features": {
+    "axes": {
+      "definition": [
+        "http://web/twin/axes-1.0.0.tm.jsonld"
+      ],
+      "properties": {
+        "positionX": 0,
+        "positionY": 0,
+        "positionZ": 0,
+        "feedRate": 0,
+        "currentX": 0
+      }
+    },
+    "spindle": {
+      "definition": [
+        "http://web/twin/spindle-1.0.0.tm.jsonld"
+      ],
+      "properties": {
+        "speed": 0,
+        "load": 0,
+        "bearingTemperature": 20
+      }
+    },
+    "vibration": {
+      "definition": [
+        "http://web/twin/vibration-1.0.0.tm.jsonld"
+      ],
+      "properties": {
+        "rms": 0,
+        "peak": 0,
+        "crestFactor": 1,
+        "kurtosis": 0,
+        "band1": 0,
+        "band2": 0,
+        "band3": 0,
+        "band4": 0
+      }
+    },
+    "status": {
+      "definition": [
+        "http://web/twin/status-1.0.0.tm.jsonld"
+      ],
+      "properties": {
+        "mode": "OFF",
+        "toolNumber": 0,
+        "alarmCode": 0,
+        "program": "",
+        "partCount": 0,
+        "coolantTemperature": 20
+      }
+    },
+    "sync": {
+      "definition": [
+        "http://web/twin/sync-1.0.0.tm.jsonld"
+      ],
+      "properties": {
+        "seq": 0,
+        "ts": 0
+      }
+    }
+  }
+}

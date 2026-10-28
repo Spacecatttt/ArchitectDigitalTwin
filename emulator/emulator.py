@@ -3,7 +3,8 @@
 Запуск з кореня репозиторію: python emulator/emulator.py --rate 10
 
 Формат пристрою — короткі назви полів, як у реальному шлюзі. Кожне повідомлення —
-стан верстата за останні 100 мс: дані ЧПК (S02–S13) і 8 ознак вібрації S01, які шлюз
+стан верстата за останні 100 мс: дані ЧПК (S02–S13), атрибути ЧПК за зміною
+(NC-програма й лічильник деталей, FR-01) і 8 ознак вібрації S01, які шлюз
 обчислює з сирого сигналу 5 кГц (ADR-0003 ЛР 1). Перетворення на модель двійника
 виконує з’єднання Ditto (platform/mapping.js), а не емулятор.
 
@@ -21,9 +22,10 @@ import paho.mqtt.client as mqtt
 
 BROKER, PORT = "localhost", 1883
 FIELDS = ["seq", "ts", "x", "y", "z", "f", "ix", "s", "ld", "tb",
-          "md", "tl", "al", "tc", "vr", "vp", "vc", "vk", "b1", "b2", "b3", "b4"]
+          "md", "tl", "al", "pg", "pc", "tc", "vr", "vp", "vc", "vk", "b1", "b2", "b3", "b4"]
 CYCLE = 120.0        # с, цикл обробки однієї деталі
 TOOLS = [3, 7, 12]   # інструменти, що змінюються протягом циклу
+PROGRAM = "HOUSING_A.MPF"   # активна NC-програма (FR-01)
 
 
 def phase(t):
@@ -73,6 +75,8 @@ def sample(t, state):
         "md": mode,
         "tl": tool,
         "al": 0,
+        "pg": PROGRAM,
+        "pc": int(t // CYCLE) - int(state["t0"] // CYCLE),   # деталей від запуску
         "tc": round(state["tc"], 2),                        # °C
         "vr": round(clip(rms, 0, 50), 4),                   # g
         "vp": round(clip(rms * crest, 0, 50), 4),           # g
@@ -97,7 +101,7 @@ def main():
     print(f"Публікація в {topic}, {args.rate} повідомл./с. Ctrl+C — зупинка")
 
     period, seq, next_time = 1 / args.rate, 0, time.time()
-    state = {"tb": 31.0, "tc": 22.5}
+    state = {"tb": 31.0, "tc": 22.5, "t0": time.time()}
     with open("results/source.csv", "w", newline="") as f:
         log = csv.writer(f)
         log.writerow(FIELDS)

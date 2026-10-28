@@ -8,7 +8,7 @@
   ],
   "@type": [
     "tm:ThingModel",
-    "cnc:SpindleVibration"
+    "cnc:VibrationDaq"
   ],
   "title": "Ознаки вібрації шпинделя",
   "version": {
@@ -91,5 +91,6 @@
       "observable": true,
       "default": 0
     }
-  }
+  },
+  "description": "Модуль DAQ вібрації на граничному ПК (ADR-0003 ЛР 1): з сирого сигналу S01 5 кГц обчислює 8 ознак у суміжних вікнах 512 відліків (FR-02)"
 }
