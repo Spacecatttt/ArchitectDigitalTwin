@@ -1,0 +1,31 @@
+{
+  "thing": "org.pzks:cnc-1",
+  "unit": "cnc-1",
+  "bindings": [
+    { "node": "spindle", "feature": "spindle", "property": "load",
+      "title": "Навантаження шпинделя", "unit": "%", "min": 0, "max": 100 },
+    { "node": "bearing", "feature": "spindle", "property": "bearingTemperature",
+      "title": "Температура підшипників", "unit": "°C", "min": 25, "max": 60 },
+    { "node": "sensor-vib", "feature": "vibration", "property": "rms",
+      "title": "Вібрація шпинделя (СКЗ)", "unit": "g", "min": 0, "max": 2.5 },
+    { "node": "coolant", "feature": "status", "property": "coolantTemperature",
+      "title": "Температура ЗОР", "unit": "°C", "min": 18, "max": 35 }
+  ],
+  "states": [
+    { "node": "lamp", "feature": "status", "property": "mode",
+      "title": "Режим (світлова колона)",
+      "colors": { "RUN": "#2e7d32", "IDLE": "#f9a825",
+                  "TOOL_CHANGE": "#1565c0", "ALARM": "#c62828" } }
+  ],
+  "motions": [
+    { "nodes": ["table", "workpiece"], "feature": "axes",
+      "property": "positionX", "title": "Вісь X", "unit": "мм",
+      "axis": 0, "center": 381, "scale": -0.001 },
+    { "nodes": ["saddle", "table", "workpiece"], "feature": "axes",
+      "property": "positionY", "title": "Вісь Y", "unit": "мм",
+      "axis": 2, "center": 203, "scale": -0.001 },
+    { "nodes": ["head", "motor", "bearing", "spindle", "tool", "sensor-vib"],
+      "feature": "axes", "property": "positionZ", "title": "Вісь Z", "unit": "мм",
+      "axis": 1, "center": 230, "scale": 0.001 }
+  ]
+}

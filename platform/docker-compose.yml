@@ -1,5 +1,7 @@
 # Платформа цифрового двійника обробного центру з ЧПК:
 # Eclipse Ditto + брокер MQTT + сховище часових рядів + подання (ЛР 2, варіант 3)
+# ЛР 3: web віддає також 3D-сцену /scene/; сервер сеансу (session/server.js, порт 8091)
+# запускається окремо на Node.js
 name: dt
 include:
   - path:
@@ -22,6 +24,7 @@ services:
       - ./web.conf:/etc/nginx/conf.d/default.conf:ro
       - ../twin:/usr/share/nginx/html/twin:ro
       - ../ui:/usr/share/nginx/html/ui:ro
+      - ../scene:/usr/share/nginx/html/scene:ro      # ЛР 3: 3D-сцена, моделі, тайли
 
   influxdb:
     image: influxdb:2.9
