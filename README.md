@@ -110,3 +110,30 @@ python emulator/emulator.py --rate 10        # подання: http://localhost:
 ```
 
 Адреси: API Ditto <http://localhost:8080/api/2> (ditto/ditto), вебконсоль <http://localhost:8080/ui/>, моделі <http://localhost:8090/twin/>, подання <http://localhost:8090/ui/>, InfluxDB <http://localhost:8086> (admin/admin-2026), Grafana <http://localhost:3000> (admin/admin).
+
+---
+
+# ЛР 3. 3D-візуалізація великих масивів даних і розподілене імерсивне середовище
+
+Вебсцена three.js цеху механообробки з 16 верстатами VMC-850: стан двійника `org.pzks:cnc-1` фарбує й рухає елементи моделі glTF (шпиндель, підшипники, акселерометр, бак ЗОР, світлова колона, осі X/Y/Z); рівні деталізації з порогами за виразом (2); рельєф майданчика заводу 2048 × 2048 м (341 тайл, 40 МБ) у 3D Tiles з потоковим завантаженням; бюджет продуктивності та 4 оптимізації (`simp`, `ktx2`, `inst`, `defer`); сервер сеансу на WebSocket з аватарами, позначками й інтерполяцією за трьох профілів мережі.
+
+| Каталог / файл | Зміст |
+|---|---|
+| `scene/` | `index.html`, `main.js`, `station.js`, `twin.js`, `binding.json`, `bench.js`, `net.js`, `shared.js`; `models/*.glb`; `tools/` — `make-model.mjs`, `make-tiles.mjs`, `ktx2.mjs`, `elements.mjs`, `lod-error.mjs`, `tris.mjs`, `mock-ditto.mjs` |
+| `session/` | `server.js` — сервер сеансу (порт 8091), `bot.js` — бот-учасник |
+| `platform/` | `docker-compose.yml` (том `../scene` у `web`), `web.conf` (`/scene/` з gzip, `/scene/tiles/` immutable) |
+| `results/` | `perf-{before,simp,ktx2,inst,defer,after}.json`, `net-{lan,city,mobile}-interp.json`, `net-mobile-extrap.json` |
+| `docs/` | `scene.md`, `performance.md`, `multiuser.md`, `adr/0005-synkhronizatsiia-stseny.md`, `img/scene.png`, `img/multiuser.png`, `img/performance.png` |
+
+Запуск (Node.js 22+; платформа ЛР 2 працює, емулятор — `python emulator/emulator.py --rate 1`):
+
+```
+cd scene && npm ci && node tools/make-tiles.mjs && cd ..     # тайли не в Git — відтворюються
+cd platform && docker compose up -d web && cd ..
+cd session && npm ci && node server.js                        # окремий термінал
+cd session && node bot.js                                     # окремий термінал
+```
+
+Адреси: <http://localhost:8090/scene/?view=near> (також `hall`, `far`, `aisle`); вимірювання — `?bench=30&label=before[&opt=inst,ktx2,simp,defer]`; багатокористувацький режим — `?name=tekhnolog&profile=city|lan|mobile[&mode=extrap][&measure=60]`. Моделі відтворюються: `node tools/make-model.mjs`, `npx gltfpack -i models/cnc-machine.glb -o models/cnc-machine-lod1.glb -si 0.03 -kn -ke`, `npx gltfpack -i models/cnc-machine.glb -o models/cnc-machine-s.glb -si 0.1 -kn -ke`, `node tools/ktx2.mjs models/hall.glb models/hall-ktx2.glb`.
+
+Без Docker сцену можна перевірити із заглушкою API Ditto: `node scene/tools/mock-ditto.mjs` (порт 8081) і будь-який nginx з `platform/web.conf`, де `proxy_pass` вказує на `127.0.0.1:8081`.
